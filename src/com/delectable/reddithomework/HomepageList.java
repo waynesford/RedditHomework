@@ -1,13 +1,14 @@
 package com.delectable.reddithomework;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import com.delectable.reddithomework.MainActivity.Contributor;
+import com.delectable.model.Child;
+import com.delectable.model.Page;
 import com.delectable.reddithomework.MainActivity.GitHubService;
 import com.example.reddithomework.R;
 
@@ -34,11 +35,11 @@ public class HomepageList extends Fragment{
 			public void onClick(View v) {
 				
 				RestAdapter restAdapter = new RestAdapter.Builder()
-				  .setServer("https://api.github.com") // The base API endpoint.
+				  .setEndpoint("http://www.reddit.com") // The base API endpoint.
 				  .build();
 				
 				GitHubService github = restAdapter.create(GitHubService.class);
-				github.contributors("square", "retrofit", callback);
+				github.contributors(callback);
 				//List<Contributor> contributors = github.contributors("square", "okhttp");
 //				String message = null; 
 //				for (Contributor contributor : contributors) {
@@ -51,12 +52,13 @@ public class HomepageList extends Fragment{
 		return rootView;
 	}
 	
-	private Callback<ArrayList<Contributor>> callback = new Callback<ArrayList<Contributor>>() {
+	private Callback<Page> callback = new Callback<Page>() {
 		@Override
-		public void success(ArrayList<Contributor> contributors, Response arg1) {
+		public void success(Page page, Response arg1) {
 			String message = ""; 
-			for (Contributor contributor : contributors) {
-			  message += contributor.login + " - " + contributor.contributions + "\n";
+			List<Child> children = page.getData().getChildren(); 
+			for (Child child : children) {
+			  message += child.getData().getTitle() + " - " + child.getData().getScore() + "\n";
 			}
 			textview.setText(message);	
 		}

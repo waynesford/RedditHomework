@@ -1,25 +1,14 @@
 package com.delectable.reddithomework;
 
-import java.util.ArrayList;
-
-import com.example.reddithomework.R;
-
 import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import retrofit.http.GET;
-import retrofit.http.Path;
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.delectable.model.Page;
+import com.example.reddithomework.R;
 
 public class MainActivity extends Activity {
 
@@ -56,11 +45,9 @@ public class MainActivity extends Activity {
 	}
 	
 	public interface GitHubService {
-		  @GET("/repos/{owner}/{repo}/contributors")
+		  @GET("/.json")
 		  void contributors(
-		      @Path("owner") String owner,
-		      @Path("repo") String repo,
-			  Callback<ArrayList<Contributor>> cb
+			  Callback<Page> cb
 		  );
 		}
 	public class Contributor {
