@@ -8,21 +8,31 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.delectable.model.Child;
+import com.delectable.model.Data2;
 import com.delectable.model.Page;
 import com.delectable.reddithomework.MainActivity.GitHubService;
 import com.example.reddithomework.R;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Picasso.Listener;
 
 public class HomepageList extends Fragment{
 
@@ -79,7 +89,6 @@ public class HomepageList extends Fragment{
 	    @Override
 	    public void failure(RetrofitError retrofitError) {
 			//mListView.setText(retrofitError.toString());	
-
 	    }
 	};
 	
@@ -120,15 +129,53 @@ public class HomepageList extends Fragment{
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
-			TextView view = (TextView)convertView; 
+			RelativeLayout view = (RelativeLayout)convertView; 
 			if(view==null) {
 				LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-				view = new TextView(getActivity());
+				view = (RelativeLayout)inflater.inflate(R.layout.homepage_row, parent, false); 
 			}
-			view.setText(getItem(position).getData().getTitle() + " - " + getItem(position).getData().getScore());
+			
+			Data2 data = getItem(position).getData();
+			
+			((TextView)view.findViewById(R.id.title) ).setText(data.getTitle());
+			((TextView)view.findViewById(R.id.comments) ).setText(String.valueOf(data.getNum_comments()));
+			((TextView)view.findViewById(R.id.score) ).setText(String.valueOf(data.getScore()));
+			ImageView thumbnailImageView = (ImageView)view.findViewById(R.id.thumbnail); 
+			
+			int targetWidth = getPx(parent.getContext(), 80);
+			int targetHeight = getPx(parent.getContext(), 80);
+			final String title = data.getTitle();
+			Picasso.with(parent.getContext()).load(data.getUrl()).fit().into(thumbnailImageView);
+			//Picasso.with(parent.getContext()).load("http://f.thumbs.redditmedia.com/FwDuK1DO76atl2rk.jpg").fit().centerInside().into(thumbnailImageView);
+
+			
+			Listener listener = new Listener() {
+				@Override
+				public void onImageLoadFailed(Picasso arg0, Uri arg1, Exception exception) {
+					exception.printStackTrace();
+					
+				}
+			};
+			
+			//new Picasso.Builder(getActivity()).listener(listener).build().load(data.getUrl()).fit().centerInside().into(thumbnailImageView);
+			
+			Log.d("sample", "title: " + data.getTitle());
+			Log.d("sample", "thumbnail: " + data.getThumbnail());
+
+			
+			
 			return view;
 		}
 		
+		
+		
+	}
+	
+	/**Converts dp to px*/
+	public static int getPx(Context context, float dp) 
+	{
+		Resources r = context.getResources();
+		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
 	}
 
 }
