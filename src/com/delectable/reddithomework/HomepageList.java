@@ -2,7 +2,6 @@ package com.delectable.reddithomework;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
