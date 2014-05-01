@@ -47,7 +47,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 
 	@Override
 	public void onItemSelected(Child child) {
-		// TODO Auto-generated method stub
+		
+		//pass on data to detailview
+		getFragmentManager().beginTransaction()
+		.replace(R.id.container, new DetailViewFragment())
+		.addToBackStack(DetailViewFragment.class.getSimpleName())
+		.commit();
 		
 	}
 	
