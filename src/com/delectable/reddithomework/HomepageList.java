@@ -9,10 +9,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +18,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.delectable.model.Child;
 import com.delectable.model.Data2;
 import com.delectable.model.Page;
 import com.delectable.reddithomework.MainActivity.GitHubService;
 import com.example.reddithomework.R;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Picasso.Listener;
 
 public class HomepageList extends Fragment{
 
@@ -80,9 +72,6 @@ public class HomepageList extends Fragment{
 			String message = ""; 
 			List<Child> children = page.getData().getChildren(); 
 			mChildren.addAll(children); 
-//			for (Child child : children) {
-//			  message += child.getData().getTitle() + " - " + child.getData().getScore() + "\n";
-//			}
 			mListAdapter.notifyDataSetChanged(); 
 		}
 
@@ -92,13 +81,15 @@ public class HomepageList extends Fragment{
 	    }
 	};
 	
+	
 	OnItemClickListener mItemClickListener = new OnItemClickListener() {
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 		{
-			// TODO Auto-generated method stub
-			
+			//inverse selection
+			boolean selected = view.isSelected();
+			view.setSelected(!selected);
 		}
 	};
 	
@@ -127,55 +118,28 @@ public class HomepageList extends Fragment{
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			RelativeLayout view = (RelativeLayout)convertView; 
+		public View getView(int position, View convertView, ViewGroup parent) 
+		{
+			ImageRow view = (ImageRow)convertView; 
+			//init rows
 			if(view==null) {
-				LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-				view = (RelativeLayout)inflater.inflate(R.layout.homepage_row, parent, false); 
+				int height = getPx(parent.getContext(), 80);
+				view = new ImageRow(getActivity());
+				//view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, height));
 			}
-			
+			//set data upon rows as they get shown on screen
 			Data2 data = getItem(position).getData();
-			
-			((TextView)view.findViewById(R.id.title) ).setText(data.getTitle());
-			((TextView)view.findViewById(R.id.comments) ).setText(String.valueOf(data.getNum_comments()));
-			((TextView)view.findViewById(R.id.score) ).setText(String.valueOf(data.getScore()));
-			ImageView thumbnailImageView = (ImageView)view.findViewById(R.id.thumbnail); 
-			
-			int targetWidth = getPx(parent.getContext(), 80);
-			int targetHeight = getPx(parent.getContext(), 80);
-			final String title = data.getTitle();
-			Picasso.with(parent.getContext()).load(data.getUrl()).fit().into(thumbnailImageView);
-			//Picasso.with(parent.getContext()).load("http://f.thumbs.redditmedia.com/FwDuK1DO76atl2rk.jpg").fit().centerInside().into(thumbnailImageView);
-
-			
-			Listener listener = new Listener() {
-				@Override
-				public void onImageLoadFailed(Picasso arg0, Uri arg1, Exception exception) {
-					exception.printStackTrace();
-					
-				}
-			};
-			
-			//new Picasso.Builder(getActivity()).listener(listener).build().load(data.getUrl()).fit().centerInside().into(thumbnailImageView);
-			
-			Log.d("sample", "title: " + data.getTitle());
-			Log.d("sample", "thumbnail: " + data.getThumbnail());
-
-			
-			
+			view.setData(data);
 			return view;
 		}
-		
 		
 		
 	}
 	
 	/**Converts dp to px*/
-	public static int getPx(Context context, float dp) 
+	private int getPx(Context c, float dp) 
 	{
-		Resources r = context.getResources();
-		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, c.getResources().getDisplayMetrics());
 	}
 
 }
