@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.delectable.model.Child;
 import com.delectable.model.Page;
@@ -38,13 +39,14 @@ public class HomepageList extends Fragment{
 
 	RedditEndpoints redditService = restAdapter.create(RedditEndpoints.class);
 	
-	/**
-	 * We use this hold on to the after ID that we use to get to the next page
-	 */
+	/**We use this hold on to the after ID that we use to get to the next page*/
 	private String mAfter;
 	/**Used to keep track of when a rest request is taking place, so we don't end up making double calls*/
 	private boolean isLoading;
+	/**The progressBar is shown when the user scrolls to the bottom of the list and the GET request for the next page of data is underway.*/
 	private ProgressBar mProgressBar; 
+	/**This shows up in our header when we've exhausted the data source.*/
+	private TextView mEndTextView; 
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
@@ -58,6 +60,8 @@ public class HomepageList extends Fragment{
 		View footer = inflater.inflate(R.layout.footer, mListView, false);
 		mProgressBar = (ProgressBar)footer.findViewById(R.id.progressBar);
 		mProgressBar.setVisibility(View.GONE);
+		mEndTextView = (TextView)footer.findViewById(R.id.end);
+
 		mListView.addFooterView(footer, null, false);
 		mListView.setOnItemClickListener(mItemClickListener);
 		mListView.setAdapter(mListAdapter = new MyListAdapter(mChildren));
@@ -85,6 +89,11 @@ public class HomepageList extends Fragment{
 
 			//grabbing hold of after so we can use it later when user scrolls to bottom of list
 			mAfter = page.getData().getAfter(); 
+			
+			//means we've reached the last page of the data source, and there is no page afterwards
+			if(mAfter==null) {
+				mEndTextView.setVisibility(View.VISIBLE);
+			}
 			
 			//adding the new onto array and refreshing the listview to show additions
 			List<Child> children = page.getData().getChildren(); 
@@ -115,6 +124,12 @@ public class HomepageList extends Fragment{
 			if(isLoading) {
 				return;
 			}
+			
+			//means we've reached the end of the list, so we disallow them from making another rest request
+			if(mEndTextView.getVisibility()==View.VISIBLE) {
+				return;
+			}
+			
 			//listen for when the user has reached the bottom of the list
 			 boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
 
@@ -123,7 +138,6 @@ public class HomepageList extends Fragment{
 					redditService.getHomepage(mAfter, callback);
 					isLoading = true;
 					mProgressBar.setVisibility(View.VISIBLE);
-					getActivity().setProgressBarIndeterminateVisibility(true);
 			 }
 		}
 	};

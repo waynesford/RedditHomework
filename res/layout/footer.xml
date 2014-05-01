@@ -10,4 +10,14 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />
 
+    <TextView
+        android:id="@+id/end"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:text="El Fin!" />
+
 </RelativeLayout>
