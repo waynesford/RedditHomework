@@ -7,6 +7,7 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,23 +24,29 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.delectable.model.Child;
+import com.delectable.model.Data2;
 import com.delectable.model.Page;
 import com.example.reddithomework.R;
 
 public class HomepageList extends Fragment{
 
-
-	ListView mListView;
-	MyListAdapter mListAdapter; 
-	List<Child> mChildren = new ArrayList<Child>();
-
-	//initing our rest endpoint class
+	//setup our rest endpoint class
 	RestAdapter restAdapter = new RestAdapter.Builder()
 	.setEndpoint("http://www.reddit.com") // The base API endpoint.
 	.build();
 
 	RedditEndpoints redditEndpoints = restAdapter.create(RedditEndpoints.class);
+	
+	
 
+	//our callback to the activity, to let it know which item was selected
+	OnItemSelectedListener mListener; 
+	
+	ListView mListView;
+	MyListAdapter mListAdapter; 
+	List<Child> mChildren = new ArrayList<Child>();
+
+	
 	/**We use this hold on to the after ID that we use to get to the next page*/
 	private String mAfter;
 	/**The progressBar is shown when the user scrolls to the bottom of the list and the GET request for the next page of data is underway.*/
@@ -48,7 +55,6 @@ public class HomepageList extends Fragment{
 	private TextView mEndTextView; 
 	/**This shows when the GET request errors. Pressing the Button will allow them to manually init the request again!*/
 	private Button mErrorButton; 
-
 	/**
 	 * If we are showing the ProgressBar, then we must be attempting a GET request currently. 
 	 * Used to make sure we aren't making double calls
@@ -57,9 +63,7 @@ public class HomepageList extends Fragment{
 	{
 		return mProgressBar.getVisibility()==View.VISIBLE; 
 	}
-	
 	/**
-	 * 
 	 * @param afterValue The after ID needed to retrieve the next page. Pass in null to not pass in an "after" parameter, which will simply return the first page of the list.
 	 */
 	private void getNextRedditPage(String afterValue)
@@ -69,6 +73,28 @@ public class HomepageList extends Fragment{
 		//we'll always show the progressCircle when we we init a GET request. we also use it's visibility value for flow control as well.
 		mProgressBar.setVisibility(View.VISIBLE);
 	}
+	
+	
+    /** Container Activity must implement this interface and we ensure
+     * that it does during the onAttach() callback
+     */
+    public interface OnItemSelectedListener {
+        public void onItemSelected(Data2 data);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Check that the container activity has implemented the callback interface
+        try {
+            mListener = (OnItemSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() 
+                    + " must implement OnItemSelectedListener");
+        }
+    }
+	
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 

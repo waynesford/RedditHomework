@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 
+import com.delectable.model.Data2;
+import com.delectable.reddithomework.HomepageList.OnItemSelectedListener;
 import com.example.reddithomework.R;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnItemSelectedListener{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -41,6 +42,12 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onItemSelected(Data2 data) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 
