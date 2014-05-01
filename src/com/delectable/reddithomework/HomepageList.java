@@ -23,7 +23,6 @@ import android.widget.ListView;
 import com.delectable.model.Child;
 import com.delectable.model.Data2;
 import com.delectable.model.Page;
-import com.delectable.reddithomework.MainActivity.GitHubService;
 import com.example.reddithomework.R;
 
 public class HomepageList extends Fragment{
@@ -59,8 +58,8 @@ public class HomepageList extends Fragment{
 		rootView.findViewById(R.id.button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				GitHubService github = restAdapter.create(GitHubService.class);
-				github.contributors(callback);
+				RedditEndpoints redditService = restAdapter.create(RedditEndpoints.class);
+				redditService.getHomepage(callback);
 			}
 		});
 		return rootView;
@@ -69,8 +68,8 @@ public class HomepageList extends Fragment{
 	private Callback<Page> callback = new Callback<Page>() {
 		@Override
 		public void success(Page page, Response arg1) {
-			String message = ""; 
 			List<Child> children = page.getData().getChildren(); 
+			mChildren.clear(); 
 			mChildren.addAll(children); 
 			mListAdapter.notifyDataSetChanged(); 
 		}

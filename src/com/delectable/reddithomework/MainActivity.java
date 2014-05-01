@@ -1,13 +1,10 @@
 package com.delectable.reddithomework;
 
-import retrofit.Callback;
-import retrofit.http.GET;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.delectable.model.Page;
 import com.example.reddithomework.R;
 
 public class MainActivity extends Activity {
@@ -44,16 +41,7 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public interface GitHubService {
-		  @GET("/.json")
-		  void contributors(
-			  Callback<Page> cb
-		  );
-		}
-	public class Contributor {
-		  public String login; // GitHub username.
-		  public int contributions; // Commit count.
-		}
+
 
 
 }

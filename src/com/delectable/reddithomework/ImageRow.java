@@ -37,9 +37,6 @@ public class ImageRow extends RelativeLayout{
 		mComments 	= (TextView)findViewById(R.id.comments);
 		mScore 		= (TextView)findViewById(R.id.score);
 		mThumbnail 	= (ImageView)findViewById(R.id.thumbnail); 
-		
-
-		
 	}
 	
 	public void setData(Data2 data)
