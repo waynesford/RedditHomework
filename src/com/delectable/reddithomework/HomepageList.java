@@ -115,19 +115,40 @@ public class HomepageList extends Fragment{
 		{
 			return position;
 		}
+		
+		@Override
+		public int getItemViewType(int position) 
+		{
+			Data2 data = getItem(position).getData();
+			if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
+				return 0;
+			}
+			return 1; 
+		}
+		
+		@Override
+		public int getViewTypeCount() 
+		{
+			return 2;
+		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) 
 		{
+			Data2 data = getItem(position).getData();
 			ImageRow view = (ImageRow)convertView; 
-			//init rows
+			
+			//init row views
 			if(view==null) {
 				int height = getPx(parent.getContext(), 80);
-				view = new ImageRow(getActivity());
+				if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
+					view = new ImageRow(getActivity());
+				} else {
+					view = new TitleOnlyRow(getActivity()); 
+				}
 				//view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, height));
 			}
 			//set data upon rows as they get shown on screen
-			Data2 data = getItem(position).getData();
 			view.setData(data);
 			return view;
 		}

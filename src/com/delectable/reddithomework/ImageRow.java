@@ -16,6 +16,12 @@ public class ImageRow extends RelativeLayout{
 	private TextView mComments;
 	private TextView mScore;
 	private ImageView mThumbnail; 
+	
+	public TextView getTitleView() 		{ return mTitle; }
+	public TextView getCommentsView() 	{ return mComments; }
+	public TextView getScoreView() 		{ return mScore; }
+	public ImageView getThumbnailView()	{ return mThumbnail; }
+
 
 	public ImageRow(Context context)
 	{
@@ -41,13 +47,17 @@ public class ImageRow extends RelativeLayout{
 	
 	public void setData(Data2 data)
 	{
+		setTextData(data);
+		//if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
+			Picasso.with(getContext()).load(data.getThumbnail()).into(mThumbnail);
+		//}
+	}
+	
+	protected void setTextData(Data2 data)
+	{
 		mTitle.setText(data.getTitle());
 		mComments.setText(String.valueOf(data.getNum_comments()));
 		mScore.setText(String.valueOf(data.getScore()));
-		
-		if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
-			Picasso.with(getContext()).load(data.getThumbnail()).into(mThumbnail);
-		}
 	}
 
 
