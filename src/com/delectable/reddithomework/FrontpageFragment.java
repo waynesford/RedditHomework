@@ -79,7 +79,7 @@ public class FrontpageFragment extends Fragment{
      * that it does during the onAttach() callback
      */
     public interface OnItemSelectedListener {
-        public void onItemSelected(Data2 data);
+        public void onItemSelected(Child child);
     }
 
     @Override
@@ -93,8 +93,6 @@ public class FrontpageFragment extends Fragment{
                     + " must implement OnItemSelectedListener");
         }
     }
-	
-	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
@@ -209,9 +207,8 @@ public class FrontpageFragment extends Fragment{
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 		{
-			//inverse selection
-			boolean selected = view.isSelected();
-			view.setSelected(!selected);
+			//callback to activity to inform it what item was selected
+			mListener.onItemSelected(mListAdapter.getItem(position));
 		}
 	};
 

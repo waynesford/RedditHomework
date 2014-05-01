@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.delectable.model.Child;
 import com.delectable.model.Data2;
 import com.delectable.reddithomework.FrontpageFragment.OnItemSelectedListener;
 import com.example.reddithomework.R;
@@ -45,7 +46,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	}
 
 	@Override
-	public void onItemSelected(Data2 data) {
+	public void onItemSelected(Child child) {
 		// TODO Auto-generated method stub
 		
 	}
