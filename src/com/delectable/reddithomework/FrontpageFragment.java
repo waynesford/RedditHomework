@@ -28,7 +28,7 @@ import com.delectable.model.Data2;
 import com.delectable.model.Page;
 import com.example.reddithomework.R;
 
-public class HomepageList extends Fragment{
+public class FrontpageFragment extends Fragment{
 
 	//setup our rest endpoint class
 	RestAdapter restAdapter = new RestAdapter.Builder()

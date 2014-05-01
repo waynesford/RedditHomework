@@ -6,7 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.delectable.model.Data2;
-import com.delectable.reddithomework.HomepageList.OnItemSelectedListener;
+import com.delectable.reddithomework.FrontpageFragment.OnItemSelectedListener;
 import com.example.reddithomework.R;
 
 public class MainActivity extends Activity implements OnItemSelectedListener{
@@ -20,7 +20,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
-					.add(R.id.container, new HomepageList()).commit();
+					.add(R.id.container, new FrontpageFragment()).commit();
 		}
 	}
 
