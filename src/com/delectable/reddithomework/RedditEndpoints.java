@@ -2,10 +2,11 @@ package com.delectable.reddithomework;
 
 import retrofit.Callback;
 import retrofit.http.GET;
+import retrofit.http.Query;
 
 import com.delectable.model.Page;
 
 public interface RedditEndpoints {
 	  @GET("/.json")
-	  void getHomepage(Callback<Page> cb);
+	  void getHomepage(@Query("after") String sort, Callback<Page> cb);
 	}

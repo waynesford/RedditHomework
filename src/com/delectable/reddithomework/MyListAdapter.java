@@ -61,20 +61,22 @@ class MyListAdapter extends BaseAdapter
 		
 		//init row views
 		if(view==null) {
-			int height = getPx(parent.getContext(), 80);
 			if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
 				view = new ImageRow(parent.getContext());
-				view = new TitleOnlyRow(parent.getContext()); 
-
 			} else {
 				view = new TitleOnlyRow(parent.getContext()); 
 			}
+			int height = getPx(parent.getContext(), 80);
 			//view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, height));
 		}
+		
 		//set data upon rows as they get shown on screen
 		view.setData(data);
+		
 		return view;
 	}
+	
+	
 	
 	
 	/**Converts dp to px*/

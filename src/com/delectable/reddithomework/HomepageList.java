@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -26,19 +28,22 @@ public class HomepageList extends Fragment{
 
 	ListView mListView;
 	MyListAdapter mListAdapter; 
-	RestAdapter restAdapter;
-	List<Child> mChildren = new ArrayList<Child>(); 
+	List<Child> mChildren = new ArrayList<Child>();
+
+	RestAdapter restAdapter = new RestAdapter.Builder()
+	  .setEndpoint("http://www.reddit.com") // The base API endpoint.
+	  .build();
+
+	RedditEndpoints redditService = restAdapter.create(RedditEndpoints.class);
 	
-	@Override
-	public void onCreate(Bundle savedInstanceState) 
-	{
-		super.onCreate(savedInstanceState);
-		
-		//init restAdapter
-		restAdapter = new RestAdapter.Builder()
-		  .setEndpoint("http://www.reddit.com") // The base API endpoint.
-		  .build();
-	}
+	/**
+	 * We use this hold on to the after ID that we use to get to the next page
+	 */
+	private String mAfter;
+	/**Used to keep track of when a rest request is taking place, so we don't end up making double calls*/
+	private boolean isLoading; 
+	
+	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
@@ -49,13 +54,14 @@ public class HomepageList extends Fragment{
 		mListView = (ListView)rootView.findViewById(R.id.listview);
 		mListView.setOnItemClickListener(mItemClickListener);
 		mListView.setAdapter(mListAdapter = new MyListAdapter(mChildren));
+		mListView.setOnScrollListener(mScrollListener);
 		
 		//setting up button to invoke call
 		rootView.findViewById(R.id.button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				RedditEndpoints redditService = restAdapter.create(RedditEndpoints.class);
-				redditService.getHomepage(callback);
+				redditService.getHomepage(null, callback);
+				isLoading = true; 
 			}
 		});
 		return rootView;
@@ -64,21 +70,53 @@ public class HomepageList extends Fragment{
 	private Callback<Page> callback = new Callback<Page>() {
 		@Override
 		public void success(Page page, Response arg1) {
+			
+			//done retrieving items, so we can set this back to false
+			isLoading = false;
+			
+			//grabbing hold of after so we can use it later when user scrolls to bottom of list
+			mAfter = page.getData().getAfter(); 
+			
+			//adding the new onto array and refreshing the listview to show additions
 			List<Child> children = page.getData().getChildren(); 
-			mChildren.clear(); 
 			mChildren.addAll(children); 
 			mListAdapter.notifyDataSetChanged(); 
 		}
 
 	    @Override
 	    public void failure(RetrofitError retrofitError) {
+	    	
+	    	isLoading = false;
 			//mListView.setText(retrofitError.toString());	
 	    }
 	};
 	
+	private OnScrollListener mScrollListener = new OnScrollListener() {
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			//do nothing
+		}
+		
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) 
+		{
+			//in the middle of a request, disallow a new rest request from happening
+			if(isLoading) {
+				return;
+			}
+			//listen for when the user has reached the bottom of the list
+			 boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
+
+			 //if they have, then we init the GET call for the next page
+			 if(loadMore) {
+					redditService.getHomepage(mAfter, callback);
+					isLoading = true; 
+			 }
+		}
+	};
+	
 	
 	OnItemClickListener mItemClickListener = new OnItemClickListener() {
-
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 		{
