@@ -13,11 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,6 +46,9 @@ public class HomepageList extends Fragment{
 	private ProgressBar mProgressBar; 
 	/**This shows up in our header when we've exhausted the data source.*/
 	private TextView mEndTextView; 
+	/**This shows when the GET request errors. Pressing the Button will allow them to manually init the request again!*/
+	private Button mErrorButton; 
+
 	/**
 	 * If we are showing the ProgressBar, then we must be attempting a GET request currently. 
 	 * Used to make sure we aren't making double calls
@@ -53,6 +56,18 @@ public class HomepageList extends Fragment{
 	private boolean isLoading()
 	{
 		return mProgressBar.getVisibility()==View.VISIBLE; 
+	}
+	
+	/**
+	 * 
+	 * @param afterValue The after ID needed to retrieve the next page. Pass in null to not pass in an "after" parameter, which will simply return the first page of the list.
+	 */
+	private void getNextRedditPage(String afterValue)
+	{
+		redditEndpoints.getRedditFrontpage(afterValue, callback);
+		
+		//we'll always show the progressCircle when we we init a GET request. we also use it's visibility value for flow control as well.
+		mProgressBar.setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -68,7 +83,18 @@ public class HomepageList extends Fragment{
 		mProgressBar = (ProgressBar)footer.findViewById(R.id.progressBar);
 		mProgressBar.setVisibility(View.GONE);
 		mEndTextView = (TextView)footer.findViewById(R.id.end);
+		mErrorButton = (Button)footer.findViewById(R.id.error);
+		
+		//as this will only be visible on error, this will essentially redo the last call
+		//over again, because our mAfter value was never replaced with a value from the succesful response.
+		mErrorButton.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				mErrorButton.setVisibility(View.GONE);
+				getNextRedditPage(mAfter);
+			}
+		});
 
+		//listview setup (cont.)
 		mListView.addFooterView(footer, null, false);
 		mListView.setOnItemClickListener(mItemClickListener);
 		mListView.setAdapter(mListAdapter = new MyListAdapter(mChildren));
@@ -76,9 +102,8 @@ public class HomepageList extends Fragment{
 
 		//setting up button to invoke call
 		rootView.findViewById(R.id.button).setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
-				redditEndpoints.getHomepage(null, callback);
+				redditEndpoints.getRedditFrontpage(null, callback);
 				mProgressBar.setVisibility(View.VISIBLE);
 			}
 		});
@@ -109,7 +134,7 @@ public class HomepageList extends Fragment{
 		@Override
 		public void failure(RetrofitError retrofitError) {
 
-			//TODO need to handle error
+			mErrorButton.setVisibility(View.VISIBLE);
 			mProgressBar.setVisibility(View.GONE);
 
 		}
@@ -121,6 +146,7 @@ public class HomepageList extends Fragment{
 			//do nothing
 		}
 
+		
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) 
 		{
@@ -129,18 +155,23 @@ public class HomepageList extends Fragment{
 				return;
 			}
 
-			//means we've reached the end of the list, so we disallow them from making another rest request
+			//we've reached the end of the list, disallow user from making another request
 			if(mEndTextView.getVisibility()==View.VISIBLE) {
+				return;
+			}
+			
+			//the error button is visible only when the last GET request errored, 
+			//disallow scrolldown to get more posts, user must manually retry request by pressing error button
+			if(mErrorButton.getVisibility()==View.VISIBLE) {
 				return;
 			}
 
 			//listen for when the user has reached the bottom of the list
 			boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
 
-			//if they've reached the end of the list, then we init the GET call for the next page
+			//if they've reached the end of the list, then we start the GET request for the next page
 			if(loadMore) {
-				redditEndpoints.getHomepage(mAfter, callback);
-				mProgressBar.setVisibility(View.VISIBLE);
+				getNextRedditPage(mAfter);
 			}
 		}
 	};

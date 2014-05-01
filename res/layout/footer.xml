@@ -14,10 +14,19 @@
         android:id="@+id/end"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:textStyle="bold"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:text="El Fin!" />
+        android:gravity="center"
+        android:text="El Fin!"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="Error retrieving data. Press to try again!"
+        android:visibility="gone" />
 
 </RelativeLayout>

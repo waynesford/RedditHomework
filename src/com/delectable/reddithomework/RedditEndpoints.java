@@ -8,5 +8,5 @@ import com.delectable.model.Page;
 
 public interface RedditEndpoints {
 	  @GET("/.json")
-	  void getHomepage(@Query("after") String after, Callback<Page> cb);
+	  void getRedditFrontpage(@Query("after") String after, Callback<Page> cb);
 	}
