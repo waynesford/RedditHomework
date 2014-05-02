@@ -2,13 +2,9 @@ package com.delectable.reddithomework;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.delectable.model.Child;
-import com.delectable.reddithomework.DetailViewFragment.DataType;
 import com.delectable.reddithomework.FrontpageFragment.OnItemSelectedListener;
 import com.example.reddithomework.R;
 
@@ -22,11 +18,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		setContentView(R.layout.activity_main);
 
 		if (savedInstanceState == null) {
-			Log.d("samples", "savedInstanceState is null");
 			getFragmentManager().beginTransaction()
 			.add(R.id.container, new FrontpageFragment()).commit();
-		} else {
-			Log.d("samples", "savedInstanceState is not null");
 		}
 	}
 
