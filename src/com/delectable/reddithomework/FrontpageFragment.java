@@ -76,6 +76,8 @@ public class FrontpageFragment extends Fragment{
 		
 		//we'll always show the progressCircle when we we init a GET request. we also use it's visibility value for flow control as well.
 		mProgressBar.setVisibility(View.VISIBLE);
+		mErrorButton.setVisibility(View.GONE);
+		mEndTextView.setVisibility(View.GONE);
 	}
 	
 	
@@ -133,7 +135,7 @@ public class FrontpageFragment extends Fragment{
     	super.onCreate(savedInstanceState);
     	setHasOptionsMenu(true);
     }
-
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
 	{
@@ -195,7 +197,7 @@ public class FrontpageFragment extends Fragment{
 		@Override
 		public void failure(RetrofitError retrofitError) {
 			
-			Log.d("sample", retrofitError.getResponse().toString()); 
+			Log.d("sample", "" + retrofitError.getResponse().getReason()); 
 			retrofitError.printStackTrace();
 			mErrorButton.setVisibility(View.VISIBLE);
 			mProgressBar.setVisibility(View.GONE);
