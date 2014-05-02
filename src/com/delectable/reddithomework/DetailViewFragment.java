@@ -36,10 +36,6 @@ public class DetailViewFragment extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
 	{
-//		View view = inflater.inflate(R.layout.fragment_main, container, false);
-//		TextView tv = (TextView)view.findViewById(R.id.button);
-//		tv.setText("Hey Man");
-		
 		View view = null; 
 		if(getArguments()==null) {
 			throw new IllegalArgumentException(DetailViewFragment.class.getSimpleName() + " needs to have arguments set onto it."); 
