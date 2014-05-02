@@ -54,6 +54,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	public void onItemSelected(Child child) {
 		
 		DetailViewFragment fragment = new DetailViewFragment();
+		
+		//determining whether or not this is child has URL data or just text data
 		if(child.getData().isSelf()) {
 			//self text post
 			if(child.getData().getSelftext().equals("")) {
@@ -77,8 +79,5 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 		.commit();
 
 	}
-
-
-
 
 }

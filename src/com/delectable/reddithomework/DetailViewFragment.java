@@ -18,6 +18,17 @@ public class DetailViewFragment extends Fragment{
 	public enum DataType
 	{
 		TEXT, URL; 
+		
+		private String mData; 
+		
+		public void setData(String data)
+		{
+			mData = data; 
+		}
+		public String getData() 
+		{ 
+			return mData; 
+		}
 	}
 	
 	public void setArguments(DataType dataType, String data) 
