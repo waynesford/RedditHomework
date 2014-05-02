@@ -37,7 +37,7 @@ public class Data2 {
 	}
 	
 	
-	public boolean isIs_self() {
+	public boolean isSelf() {
 		return is_self;
 	}
 	public void setIs_self(boolean is_self) {
