@@ -165,13 +165,6 @@ public class FrontpageFragment extends Fragment{
 		mListView.setAdapter(mListAdapter = new MyListAdapter(mChildren));
 		mListView.setOnScrollListener(mScrollListener);
 
-		//setting up button to invoke call
-		rootView.findViewById(R.id.button).setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				redditEndpoints.getRedditFrontpage(null, callback);
-				mProgressBar.setVisibility(View.VISIBLE);
-			}
-		});
 		return rootView;
 	}
 
