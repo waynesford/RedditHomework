@@ -32,17 +32,18 @@ public class DetailViewFragment extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
 	{
-		View view = null; 
 		if(getArguments()==null) {
 			throw new IllegalArgumentException(DetailViewFragment.class.getSimpleName() + " needs to have arguments set onto it."); 
 		}
 		
+		View view = null; 
 		Data2 data = getArguments().getParcelable(PARCEL); 
 		if(data.isSelf()) {
 			//self text post
+			
+			//put data in textview
 			TextView tv = new TextView(getActivity());
 			tv.setText(data.getSelftext());
-			
 			//throw in scrollview
 			ScrollView scrollview = new ScrollView(getActivity());
 			scrollview.addView(tv); 
@@ -53,7 +54,6 @@ public class DetailViewFragment extends Fragment{
 			webview.loadUrl(data.getUrl());
 			view = webview;
 		}
-		
 		return view; 
 	}
 	
