@@ -2,13 +2,15 @@ package com.delectable.reddithomework;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.webkit.WebView.PictureListener;
 import android.widget.TextView;
-
-import com.example.reddithomework.R;
 
 public class DetailViewFragment extends Fragment{
 	
@@ -18,18 +20,8 @@ public class DetailViewFragment extends Fragment{
 	public enum DataType
 	{
 		TEXT, URL; 
-		
-		private String mData; 
-		
-		public void setData(String data)
-		{
-			mData = data; 
-		}
-		public String getData() 
-		{ 
-			return mData; 
-		}
 	}
+	
 	
 	public void setArguments(DataType dataType, String data) 
 	{
@@ -57,8 +49,15 @@ public class DetailViewFragment extends Fragment{
 			//init webview
 			WebView webview = new WebView(getActivity());
 			webview.loadUrl(getArguments().getString(DATA));
-			view = webview; 
-		} 
+			Log.d("sample", getArguments().getString(DATA));
+			webview.getSettings().setBuiltInZoomControls(true);
+			webview.getSettings().setDisplayZoomControls(false);
+			webview.setWebViewClient(new MyWebViewClient());
+			webview.getSettings().setJavaScriptEnabled(true);
+			webview.getSettings().setLoadWithOverviewMode(true);
+			webview.getSettings().setUseWideViewPort(true);  
+			view = webview;
+		}
 		
 		if(dataType==DataType.TEXT) {
 			//init textview
@@ -69,5 +68,16 @@ public class DetailViewFragment extends Fragment{
 		
 		return view; 
 	}
+	
+	private class MyWebViewClient extends WebViewClient { 
+        @Override 
+        public boolean shouldOverrideUrlLoading(WebView view, String url) 
+        { 
+            //show the web page in webview but not in web browser
+            view.loadUrl (url);
+            return true;
+        }
+        
+    }
 
 }
