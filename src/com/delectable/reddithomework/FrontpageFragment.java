@@ -33,6 +33,11 @@ import com.example.reddithomework.R;
 
 public class FrontpageFragment extends Fragment{
 
+	
+	private static final String LIST = "list";
+	private static final String AFTER = "after";
+	
+	
 	//setup our rest endpoint class
 	RestAdapter restAdapter = new RestAdapter.Builder()
 	.setEndpoint("http://www.reddit.com") // The base API endpoint.
@@ -47,7 +52,7 @@ public class FrontpageFragment extends Fragment{
 	
 	ListView mListView;
 	MyListAdapter mListAdapter; 
-	List<Child> mChildren = new ArrayList<Child>();
+	ArrayList<Child> mChildren = new ArrayList<Child>();
 
 	
 	/**We use this hold on to the after ID that we use to get to the next page*/
@@ -126,6 +131,15 @@ public class FrontpageFragment extends Fragment{
 		mListAdapter.notifyDataSetChanged();
 		getNextRedditPage(null);
     }
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    	
+    	//hold onto the list as well the after value so we can retrieve it again when the user rotate the screen
+    	outState.putParcelableArrayList(LIST, mChildren);
+    	outState.putString(AFTER, mAfter);
+    }
 
     
     
@@ -151,7 +165,7 @@ public class FrontpageFragment extends Fragment{
 		mErrorButton = (Button)footer.findViewById(R.id.error);
 		
 		//as this will only be visible on error, this will essentially redo the last call
-		//over again, because our mAfter value was never replaced with a value from the succesful response.
+		//over again, because our mAfter value was never replaced with a value from the successful response.
 		mErrorButton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				mErrorButton.setVisibility(View.GONE);
@@ -164,6 +178,12 @@ public class FrontpageFragment extends Fragment{
 		mListView.setOnItemClickListener(mItemClickListener);
 		mListView.setAdapter(mListAdapter = new MyListAdapter(mChildren));
 		mListView.setOnScrollListener(mScrollListener);
+		
+		if(savedInstanceState!=null) {
+			ArrayList<Child> children = savedInstanceState.getParcelableArrayList(LIST);
+			mChildren.addAll(children);
+			mAfter = savedInstanceState.getString(AFTER);
+		}
 
 		return rootView;
 	}

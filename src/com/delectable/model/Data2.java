@@ -99,7 +99,6 @@ public class Data2 implements Parcelable{
 		is_self = in.readByte() != 0;
 		selftext = in.readString();
 		url = in.readString(); 
-		
 	}
 
 
