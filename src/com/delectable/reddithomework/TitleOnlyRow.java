@@ -1,7 +1,6 @@
 package com.delectable.reddithomework;
 
 import com.delectable.model.Data2;
-import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.util.AttributeSet;

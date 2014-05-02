@@ -56,7 +56,8 @@ public class ImageRow extends RelativeLayout{
 	protected void setTextData(Data2 data)
 	{
 		mTitle.setText(data.getTitle());
-		mComments.setText(String.valueOf(data.getNum_comments()));
+		String commentString = getContext().getString(R.string.comments, String.valueOf(data.getNum_comments()));
+		mComments.setText(commentString);
 		mScore.setText(String.valueOf(data.getScore()));
 	}
 

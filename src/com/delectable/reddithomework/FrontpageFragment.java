@@ -10,12 +10,16 @@ import retrofit.client.Response;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -24,7 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.delectable.model.Child;
-import com.delectable.model.Data2;
 import com.delectable.model.Page;
 import com.example.reddithomework.R;
 
@@ -68,6 +71,7 @@ public class FrontpageFragment extends Fragment{
 	 */
 	private void getNextRedditPage(String afterValue)
 	{
+		Log.d("sample", "getNextRedditPage"); 
 		redditEndpoints.getRedditFrontpage(afterValue, callback);
 		
 		//we'll always show the progressCircle when we we init a GET request. we also use it's visibility value for flow control as well.
@@ -92,6 +96,42 @@ public class FrontpageFragment extends Fragment{
             throw new ClassCastException(activity.toString() 
                     + " must implement OnItemSelectedListener");
         }
+    }
+    
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    	menu.findItem(R.id.action_settings).setVisible(false);
+       inflater.inflate(R.menu.frontpage, menu);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) 
+    {
+    	switch (item.getItemId()) {
+		case R.id.action_refresh:
+			onRefreshClick();
+			break;
+		default:
+			break;
+		}
+    	return super.onOptionsItemSelected(item);
+    }
+    
+    private void onRefreshClick()
+    {
+    	//clear out values and get the redditpage again
+		mAfter = null;
+		mChildren.clear();
+		mListAdapter.notifyDataSetChanged();
+		getNextRedditPage(null);
+    }
+
+    
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	setHasOptionsMenu(true);
     }
 
 	@Override
@@ -138,13 +178,10 @@ public class FrontpageFragment extends Fragment{
 		@Override
 		public void success(Page page, Response arg1) {
 
-			//done retrieving items, so we hide the progressBar
 			mProgressBar.setVisibility(View.GONE);
+			mAfter = page.getData().getAfter(); //so we can use later when we user scrolls to the bottom of the list
 
-			//grabbing hold of after so we can use it later when user scrolls to bottom of list
-			mAfter = page.getData().getAfter(); 
-
-			//means we've reached the last page of the data source, and there is no page afterwards
+			//there is no next page, end of list
 			if(mAfter==null) {
 				mEndTextView.setVisibility(View.VISIBLE);
 			}
@@ -157,7 +194,9 @@ public class FrontpageFragment extends Fragment{
 
 		@Override
 		public void failure(RetrofitError retrofitError) {
-
+			
+			Log.d("sample", retrofitError.getResponse().toString()); 
+			retrofitError.printStackTrace();
 			mErrorButton.setVisibility(View.VISIBLE);
 			mProgressBar.setVisibility(View.GONE);
 
