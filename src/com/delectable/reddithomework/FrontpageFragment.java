@@ -102,7 +102,6 @@ public class FrontpageFragment extends Fragment{
     
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    	menu.findItem(R.id.action_settings).setVisible(false);
        inflater.inflate(R.menu.frontpage, menu);
     }
     

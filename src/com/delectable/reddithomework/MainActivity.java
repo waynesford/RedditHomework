@@ -31,33 +31,15 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) 
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
 	public void onItemSelected(Child child) {
 		
 		DetailViewFragment fragment = new DetailViewFragment();
 		
-		//determining whether or not this is child has URL data or just text data
+		//determine whether there is URL data or just text data
+		
 		if(child.getData().isSelf()) {
 			//self text post
+			
 			if(child.getData().getSelftext().equals("")) {
 				//empty self text, don't let user proceed
 				Toast.makeText(this, R.string.emptyText, Toast.LENGTH_SHORT).show();
