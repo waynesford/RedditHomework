@@ -1,5 +1,9 @@
 package com.delectable.reddithomework;
 
+import com.delectable.model.Data2;
+import com.example.reddithomework.R;
+
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,23 +17,21 @@ import android.webkit.WebViewClient;
 import android.webkit.WebView.PictureListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DetailViewFragment extends Fragment{
-	
-	private static final String DATATYPE = "datatype";
-	private static final String DATA = "data";
+
+	private static final String PARCEL = "dataParcel";
 	
 	public enum DataType
 	{
 		TEXT, URL; 
 	}
 	
-	
-	public void setArguments(DataType dataType, String data) 
+	public void setArguments(Data2 data)
 	{
 		Bundle bundle = new Bundle();
-		bundle.putSerializable(DATATYPE, dataType);
-		bundle.putString(DATA, data);
+		bundle.putParcelable(PARCEL, data);
 		setArguments(bundle);
 	}
 	
@@ -41,24 +43,21 @@ public class DetailViewFragment extends Fragment{
 			throw new IllegalArgumentException(DetailViewFragment.class.getSimpleName() + " needs to have arguments set onto it."); 
 		}
 		
-		DataType dataType = (DataType) getArguments().getSerializable(DATATYPE); 
-		
-		if(dataType==DataType.URL) {
-			//init webview
-			WebView webview = new MyWebView(getActivity());
-			webview.loadUrl(getArguments().getString(DATA));
-			view = webview;
-		}
-		
-		if(dataType==DataType.TEXT) {
-			//init textview
+		Data2 data = getArguments().getParcelable(PARCEL); 
+		if(data.isSelf()) {
+			//self text post
 			TextView tv = new TextView(getActivity());
-			tv.setText(getArguments().getString(DATA));
+			tv.setText(data.getSelftext());
 			
 			//throw in scrollview
 			ScrollView scrollview = new ScrollView(getActivity());
 			scrollview.addView(tv); 
 			view = scrollview; 
+		} else {
+			//link post
+			WebView webview = new MyWebView(getActivity());
+			webview.loadUrl(data.getUrl());
+			view = webview;
 		}
 		
 		return view; 

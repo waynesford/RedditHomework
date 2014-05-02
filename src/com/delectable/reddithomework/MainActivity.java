@@ -31,28 +31,19 @@ public class MainActivity extends Activity implements OnItemSelectedListener{
 	}
 
 	@Override
-	public void onItemSelected(Child child) {
-		
-		DetailViewFragment fragment = new DetailViewFragment();
-		
-		//determine whether there is URL data or just text data
-		
+	public void onItemSelected(Child child) 
+	{
+		//handle case where it's a self text post, but the text is empty
 		if(child.getData().isSelf()) {
-			//self text post
-			
 			if(child.getData().getSelftext().equals("")) {
-				//empty self text, don't let user proceed
+				//tell user there's no text, don't let user proceed to detail view
 				Toast.makeText(this, R.string.emptyText, Toast.LENGTH_SHORT).show();
 				return;
 			}
-			//there is valid text for us to populate the next screen with
-			fragment.setArguments(DataType.TEXT, child.getData().getSelftext());
-			
-			
-		} else {
-			//link post
-			fragment.setArguments(DataType.URL, child.getData().getUrl());
 		}
+		
+		DetailViewFragment fragment = new DetailViewFragment();
+		fragment.setArguments(child.getData());
 
 		//pass on data to detailview
 		getFragmentManager().beginTransaction()
