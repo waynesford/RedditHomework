@@ -1,6 +1,7 @@
 package com.delectable.reddithomework;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebView.PictureListener;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class DetailViewFragment extends Fragment{
@@ -47,15 +49,8 @@ public class DetailViewFragment extends Fragment{
 		
 		if(dataType==DataType.URL) {
 			//init webview
-			WebView webview = new WebView(getActivity());
+			WebView webview = new MyWebView(getActivity());
 			webview.loadUrl(getArguments().getString(DATA));
-			Log.d("sample", getArguments().getString(DATA));
-			webview.getSettings().setBuiltInZoomControls(true);
-			webview.getSettings().setDisplayZoomControls(false);
-			webview.setWebViewClient(new MyWebViewClient());
-			webview.getSettings().setJavaScriptEnabled(true);
-			webview.getSettings().setLoadWithOverviewMode(true);
-			webview.getSettings().setUseWideViewPort(true);  
 			view = webview;
 		}
 		
@@ -63,21 +58,44 @@ public class DetailViewFragment extends Fragment{
 			//init textview
 			TextView tv = new TextView(getActivity());
 			tv.setText(getArguments().getString(DATA));
-			view = tv; 
+			
+			//throw in scrollview
+			ScrollView scrollview = new ScrollView(getActivity());
+			scrollview.addView(tv); 
+			view = scrollview; 
 		}
 		
 		return view; 
 	}
 	
+	/**
+	 * Custom webview to wrap up general settings.
+	 */
+	private class MyWebView extends WebView {
+
+		public MyWebView(Context context) {
+			super(context);
+			
+			getSettings().setBuiltInZoomControls(true);
+			getSettings().setDisplayZoomControls(false);
+            //make sure that the web page shows in the webview and not the web browser
+			setWebViewClient(new MyWebViewClient());
+			getSettings().setJavaScriptEnabled(true);
+			getSettings().setLoadWithOverviewMode(true);
+			getSettings().setUseWideViewPort(true);  
+		}
+	}
+	
+	/**
+	 * Custom WebViewClient to make sure that the web page shows in the webview and not the web browser
+	 */
 	private class MyWebViewClient extends WebViewClient { 
-        @Override 
         public boolean shouldOverrideUrlLoading(WebView view, String url) 
         { 
             //show the web page in webview but not in web browser
             view.loadUrl (url);
             return true;
         }
-        
     }
 
 }
