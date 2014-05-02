@@ -2,8 +2,6 @@ package com.delectable.reddithomework;
 
 import java.util.List;
 
-import android.content.Context;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,8 +9,7 @@ import android.widget.BaseAdapter;
 import com.delectable.model.Child;
 import com.delectable.model.Data2;
 
-class MyListAdapter extends BaseAdapter
-{
+class MyListAdapter extends BaseAdapter {
 	
 	private List<Child> mChildren; 
 	
@@ -38,51 +35,20 @@ class MyListAdapter extends BaseAdapter
 	}
 	
 	@Override
-	public int getItemViewType(int position) 
-	{
-		Data2 data = getItem(position).getData();
-		if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
-			return 0;
-		}
-		return 1; 
-	}
-	
-	@Override
-	public int getViewTypeCount() 
-	{
-		return 2;
-	}
-
-	@Override
 	public View getView(int position, View convertView, ViewGroup parent) 
 	{
-		Data2 data = getItem(position).getData();
-		ImageRow view = (ImageRow)convertView; 
+		RowView view = (RowView)convertView; 
 		
-		//init row views
+		//init row views if they don't exist yet
 		if(view==null) {
-			if(data.getThumbnail()!=null && !data.getThumbnail().equals("")) {
-				view = new ImageRow(parent.getContext());
-			} else {
-				view = new TitleOnlyRow(parent.getContext()); 
-			}
-			int height = getPx(parent.getContext(), 80);
-			//view.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, height));
+			view = new RowView(parent.getContext());
 		}
 		
 		//set data upon rows as they get shown on screen
+		Data2 data = getItem(position).getData();
 		view.setData(data);
 		
 		return view;
-	}
-	
-	
-	
-	
-	/**Converts dp to px*/
-	private int getPx(Context c, float dp) 
-	{
-		return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, c.getResources().getDisplayMetrics());
 	}
 	
 	
