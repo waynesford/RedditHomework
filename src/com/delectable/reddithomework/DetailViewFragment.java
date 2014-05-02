@@ -1,6 +1,8 @@
 package com.delectable.reddithomework;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +22,16 @@ public class DetailViewFragment extends Fragment{
 	public enum DataType
 	{
 		TEXT, URL; 
+	}
+	
+	private ProgressDialog mDialog; 
+	
+	@Override
+	public void onAttach(Activity activity) 
+	{
+		super.onAttach(activity);
+		//init dialog
+		mDialog = new ProgressDialog(activity);
 	}
 	
 	public void setArguments(Data2 data)
@@ -52,6 +64,7 @@ public class DetailViewFragment extends Fragment{
 			//link post
 			WebView webview = new MyWebView(getActivity());
 			webview.loadUrl(data.getUrl());
+			mDialog.show();
 			view = webview;
 		}
 		return view; 
@@ -84,6 +97,12 @@ public class DetailViewFragment extends Fragment{
             //show the web page in webview but not in web browser
             view.loadUrl (url);
             return true;
+        }
+        
+        @Override
+        public void onPageFinished(WebView view, String url) {
+        	super.onPageFinished(view, url);
+        	mDialog.dismiss();
         }
     }
 

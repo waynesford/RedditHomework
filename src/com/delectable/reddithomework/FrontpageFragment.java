@@ -63,14 +63,7 @@ public class FrontpageFragment extends Fragment{
 	private TextView mEndTextView; 
 	/**This shows when the GET request errors. Pressing the Button will allow them to manually init the request again!*/
 	private Button mErrorButton; 
-	/**
-	 * If we are showing the ProgressBar, then we must be attempting a GET request currently. 
-	 * Used to make sure we aren't making double calls
-	 */
-	private boolean isLoading()
-	{
-		return mProgressBar.getVisibility()==View.VISIBLE; 
-	}
+
 	/**
 	 * @param afterValue The after ID needed to retrieve the next page. Pass in null to not pass in an "after" parameter, which will simply return the first page of the list.
 	 */
@@ -180,9 +173,12 @@ public class FrontpageFragment extends Fragment{
 		mListView.setOnScrollListener(mScrollListener);
 		
 		if(savedInstanceState!=null) {
+			Log.d("sample", "savedInstanceState not null");
 			ArrayList<Child> children = savedInstanceState.getParcelableArrayList(LIST);
 			mChildren.addAll(children);
 			mAfter = savedInstanceState.getString(AFTER);
+		} else {
+			Log.d("sample", "savedInstanceState IS null");
 		}
 
 		return rootView;
@@ -222,24 +218,24 @@ public class FrontpageFragment extends Fragment{
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 			//do nothing
 		}
-
 		
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) 
 		{
-			//in the middle of a request, disallow a new REST request from happening
+			//three situations where we would disallow scrolling down to start the next GET request for more posts:
+			
+			//in the middle of a request
 			if(isLoading()) {
 				return;
 			}
 
-			//we've reached the end of the list, disallow user from making another request
-			if(mEndTextView.getVisibility()==View.VISIBLE) {
+			//end of the list
+			if(atListEnd()) {
 				return;
 			}
 			
-			//the error button is visible only when the last GET request errored, 
-			//disallow scrolldown to get more posts, user must manually retry request by pressing error button
-			if(mErrorButton.getVisibility()==View.VISIBLE) {
+			//user must manually retry request by pressing error button
+			if(lastRequestErrored()) {
 				return;
 			}
 
@@ -252,11 +248,16 @@ public class FrontpageFragment extends Fragment{
 			}
 		}
 	};
+	
+	/**
+	 * If we are showing the ProgressBar, then we must be attempting a GET request currently. 
+	 * Used to make sure we aren't making double calls
+	 */
+	private boolean isLoading()				{ return mProgressBar.getVisibility()==View.VISIBLE; }
+	private boolean atListEnd() 			{ return mEndTextView.getVisibility()==View.VISIBLE; }
+	private boolean lastRequestErrored() 	{ return mErrorButton.getVisibility()==View.VISIBLE; }
 
-
-
-
-	OnItemClickListener mItemClickListener = new OnItemClickListener() {
+	private OnItemClickListener mItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
 		{
@@ -264,8 +265,6 @@ public class FrontpageFragment extends Fragment{
 			mListener.onItemSelected(mListAdapter.getItem(position));
 		}
 	};
-
-
 
 
 }
